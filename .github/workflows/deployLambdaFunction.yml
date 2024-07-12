@@ -1,44 +1,38 @@
-name: Deploy Lambda Function with SAM
+name: Deploy SAM Application
 
 on:
   push:
-    paths:
-      - "src/**"  # Watch changes in the src/ directory
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Set up AWS credentials
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install AWS SAM CLI
+        run: |
+          pip install aws-sam-cli
+
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2  # Replace with your AWS region
+          aws-region: us-west-2
 
-      - name: Install AWS SAM CLI
+      - name: Build SAM application
         run: |
-          pip3 install aws-sam-cli
-
-      - name: Build and package Lambda function with SAM
-        run: |
-          cd src
           sam build
-          sam package --s3-bucket your-s3-bucket --output-template-file packaged.yaml
-      
-      - name: Deploy Lambda function with SAM
+
+      - name: Deploy SAM application
         run: |
-          sam deploy --template-file packaged.yaml --stack-name your-stack-name --capabilities CAPABILITY_IAM
-      
-      - name: Output SAM Version for Debugging
-        run: |
-          sam --version
-      
-      - name: Check AWS CLI Configuration
-        run: |
-          aws sts get-caller-identity
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name my-sam-app --capabilities CAPABILITY_IAM
