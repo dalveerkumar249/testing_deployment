@@ -5,7 +5,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: app.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.9
       CodeUri: .
       FunctionName: gh-action  # Specify your Lambda function name here
       MemorySize: 128
