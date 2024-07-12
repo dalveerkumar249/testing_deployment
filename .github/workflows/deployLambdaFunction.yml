@@ -2,17 +2,17 @@ name: Deploy Lambda Function
 
 on:
   push:
-    branches:
-      - main  # This specifies that the action will run on push events to the 'main' branch. You can change this to your preferred branch.
+    paths:
+      - "src/**"
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
+    
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -29,7 +29,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2  # Specify your AWS region
+        aws-region: us-east-2  # Specify your AWS region
 
     - name: Install SAM CLI
       run: |
@@ -37,8 +37,8 @@ jobs:
 
     - name: Build SAM application
       run: |
-        sam build
+        cd src && sam build
 
     - name: Deploy SAM application
       run: |
-        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name my-sam-stack --capabilities CAPABILITY_IAM
+        cd src && sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name my-sam-stack --capabilities CAPABILITY_IAM
