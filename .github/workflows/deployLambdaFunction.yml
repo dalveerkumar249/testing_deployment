@@ -21,13 +21,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2  # Replace with your AWS region
 
-      - name: Install dependencies
+      - name: Install Python 3.8
         run: |
           sudo apt-get update
           sudo apt-get install -y python3.8 python3.8-venv python3-pip
           sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
           python3 --version
-
+      
       - name: Install AWS SAM CLI
         run: |
           pip3 install aws-sam-cli
@@ -41,3 +41,11 @@ jobs:
       - name: Deploy Lambda function with SAM
         run: |
           sam deploy --template-file packaged.yaml --stack-name your-stack-name --capabilities CAPABILITY_IAM
+      
+      - name: Output SAM Version for Debugging
+        run: |
+          sam --version
+      
+      - name: Check AWS CLI Configuration
+        run: |
+          aws sts get-caller-identity
