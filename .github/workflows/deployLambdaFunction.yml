@@ -20,11 +20,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2  # Replace with your AWS region
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip
+          sudo apt-get install -y python3.8 python3.8-venv python3-pip
+          sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+          python3 --version
+
+      - name: Install AWS SAM CLI
+        run: |
           pip3 install aws-sam-cli
 
       - name: Build and package Lambda function with SAM
