@@ -1,27 +1,44 @@
-name: Update Lambda Function with SAM
+name: Deploy Lambda Function
 
 on:
   push:
-    paths:
-      - "src/**"
-    branches: [main]
+    branches:
+      - main  # This specifies that the action will run on push events to the 'main' branch. You can change this to your preferred branch.
 
 jobs:
-  update:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Install SAM CLI
-        run: |
-          curl -sS https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip -o aws-sam-cli.zip
-          unzip aws-sam-cli.zip
-          sudo ./aws-sam-cli/install
-      - name: Build SAM application
-        run: sam build
-      - name: Update SAM application
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "us-east-2"
-        run: sam package --template-file template.yaml --s3-bucket gh-action-us-east-2 --output-template-file updated-template.yaml && sam deploy --template-file updated-template.yaml --stack-name gh-action --capabilities CAPABILITY_IAM
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Specify your Python version
+
+    - name: Install AWS CLI
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2  # Specify your AWS region
+
+    - name: Install SAM CLI
+      run: |
+        pip install aws-sam-cli
+
+    - name: Build SAM application
+      run: |
+        sam build
+
+    - name: Deploy SAM application
+      run: |
+        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name my-sam-stack --capabilities CAPABILITY_IAM
