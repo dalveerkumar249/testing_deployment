@@ -41,5 +41,5 @@ jobs:
 
     - name: Deploy SAM Application
       run: |
-        sam deploy --template-file packaged.yaml --stack-name github-vendor --capabilities CAPABILITY_IAM --region us-east-1
+        sam deploy --template-file packaged.yaml --stack-name github-vendor2 --capabilities CAPABILITY_IAM --region us-east-1
       working-directory: src/
