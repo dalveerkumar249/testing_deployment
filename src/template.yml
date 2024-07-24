@@ -11,7 +11,7 @@ Resources:
       CodeUri: .
       MemorySize: 128
       Timeout: 30
-      # Role: arn:aws:iam::926456375548:role/ShivLambdaRole
+      Role: arn:aws:iam::926456375548:role/ShivLambdaRole
       Description: A simple hello world Lambda function
 
 
